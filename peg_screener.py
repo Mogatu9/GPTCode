@@ -6,7 +6,24 @@ Fetches PEG ratio from Yahoo Finance with retry + exponential backoff.
 import time
 import random
 import yfinance as yf
-from stocks import all_stocks
+
+all_stocks = sorted([
+    "AAPL", "ABNB", "ACN", "ADBE", "ADI", "ALC", "AMD", "AMSC", "AMZN",
+    "ANET", "APP", "ARM", "AVGO", "AZO", "BA", "BAC", "BBY", "BFAM",
+    "BIIB", "BMY", "BRK-B", "BURL", "CAT", "CEG", "CELH", "CI", "CLS",
+    "COST", "CRDO", "CRM", "CRWD", "CSCO", "CVX", "DASH", "DDOG", "DELL",
+    "DG", "DIS", "DKS", "DOCN", "DRI", "EAT", "EGHT", "EQIX", "ESTC",
+    "FIVN", "FIX", "FTNT", "GAP", "GEV", "GILD", "GLD", "GOOGL", "GS",
+    "HD", "HOOD", "HPE", "HUBS", "IAU", "IBM", "INOD", "INTC", "INTU",
+    "IONQ", "ISRG", "JNJ", "JPM", "KO", "LLY", "LOW", "LULU", "MA",
+    "MDB", "MELI", "META", "MNMD", "MRK", "MRVL", "MSFT", "MU", "NEE",
+    "NET", "NICE", "NKE", "NOW", "NVDA", "OKTA", "ORCL", "OSK", "PANW",
+    "PG", "PLTR", "PSTG", "QCOM", "RDDT", "RKLB", "RMBS", "RNG", "ROKU",
+    "ROST", "SAP", "SBUX", "SIBN", "SMCI", "SNOW", "SOUN", "SPOT", "STZ",
+    "TEAM", "TGT", "TJX", "TRU", "TSLA", "TSM", "TTD", "TWLO", "TXN",
+    "UBER", "ULTA", "UNH", "V", "VEEV", "VRNT", "VRTX", "W", "WDAY",
+    "WDC", "WMT", "XOM", "ZM", "ZS",
+])
 
 PEG_THRESHOLD = 2.0
 MAX_RETRIES = 4

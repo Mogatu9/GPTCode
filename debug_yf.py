@@ -1,4 +1,4 @@
-"""Run this and paste the full output so we can diagnose the N/A issue."""
+"""Diagnose Yahoo Finance PEG data availability."""
 import requests, json
 
 session = requests.Session()
@@ -11,31 +11,27 @@ session.headers.update({
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
 })
 
-print("=== STEP 1: Visit finance.yahoo.com ===")
-r1 = session.get("https://finance.yahoo.com", timeout=15)
-print(f"Status : {r1.status_code}")
-print(f"Cookies: {list(session.cookies.keys())}")
+# Get cookies + crumb
+session.get("https://finance.yahoo.com", timeout=15)
+crumb = session.get(
+    "https://query2.finance.yahoo.com/v1/test/getcrumb", timeout=15
+).text.strip()
+print(f"Crumb: {crumb}\n")
 
-print("\n=== STEP 2: Get crumb ===")
-r2 = session.get("https://query2.finance.yahoo.com/v1/test/getcrumb", timeout=15)
-print(f"Status : {r2.status_code}")
-print(f"Body   : {r2.text[:300]}")
-
-crumb = r2.text.strip()
-
-print("\n=== STEP 3: Fetch AAPL defaultKeyStatistics ===")
-url = (
-    "https://query2.finance.yahoo.com/v10/finance/quoteSummary/"
-    f"AAPL?modules=defaultKeyStatistics&crumb={crumb}"
-)
-r3 = session.get(url, timeout=15)
-print(f"Status : {r3.status_code}")
-print(f"Body   : {r3.text[:800]}")
-
-print("\n=== STEP 4: Try v7 quote endpoint (no crumb needed) ===")
-r4 = session.get(
-    "https://query1.finance.yahoo.com/v7/finance/quote?symbols=AAPL",
-    timeout=15,
-)
-print(f"Status : {r4.status_code}")
-print(f"Body   : {r4.text[:800]}")
+# Test 3 stocks that usually have PEG ratios
+for ticker in ["NVDA", "AAPL", "META"]:
+    url = (
+        "https://query2.finance.yahoo.com/v10/finance/quoteSummary/"
+        f"{ticker}?modules=defaultKeyStatistics&crumb={crumb}"
+    )
+    r = session.get(url, timeout=15)
+    data = r.json()
+    try:
+        stats = data["quoteSummary"]["result"][0]["defaultKeyStatistics"]
+        peg   = stats.get("pegRatio", "NOT FOUND")
+        fpe   = stats.get("forwardPE", "NOT FOUND")
+        print(f"{ticker}  pegRatio={peg}  forwardPE={fpe}")
+    except Exception as e:
+        print(f"{ticker}  ERROR: {e}")
+        print(f"  Raw: {r.text[:300]}")
+    import time; time.sleep(0.5)

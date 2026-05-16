@@ -1,8 +1,9 @@
 """
-PEG Screener  --  threshold < 2.0
+PEG Screener v3  --  threshold < 2.0
 Uses requests only (no yfinance / pandas / numpy) -- works on Android.
 Handles Yahoo Finance cookie + crumb authentication.
 """
+VERSION = "v3-crumb"
 
 import time
 import random
@@ -100,8 +101,8 @@ def main():
     results = []
 
     print("=" * 66)
-    print(f"  PEG SCREENER  --  threshold < {PEG_THRESHOLD}")
-    print(f"  {total} tickers  |  source: Yahoo Finance")
+    print(f"  PEG SCREENER {VERSION}  --  threshold < {PEG_THRESHOLD}")
+    print(f"  {total} tickers  |  source: Yahoo Finance (cookie+crumb)")
     print("=" * 66)
 
     print("  Connecting to Yahoo Finance ...")
